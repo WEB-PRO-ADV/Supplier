@@ -10,12 +10,23 @@
 }
 
 .new-item {
+    border: 1px solid #e0dfdf;
+    border-radius: 5px;
+    padding: 10px;
+    position: relative;
     -webkit-animation: fadeInFromNone 1s ease-out;
     -moz-animation: fadeInFromNone 1s ease-out;
     -o-animation: fadeInFromNone 1s ease-out;
     animation: fadeInFromNone 1s ease-out;
 }
 
+
+.remove-icon {
+    position: absolute;
+    right: -12px;
+    bottom: -12px;
+    background: #fff;
+}
 @-webkit-keyframes fadeInFromNone {
     0% {
         opacity: 0;
