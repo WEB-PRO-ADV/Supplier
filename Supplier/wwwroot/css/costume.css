@@ -90,3 +90,7 @@
 .nav-text {
     padding-left: 5px;
 }
+
+.flex-display {
+    display: flex;
+}
