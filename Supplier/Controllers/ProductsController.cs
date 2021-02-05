@@ -60,17 +60,54 @@ namespace Supplier.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(/*[Bind("Id,Name,Code,Description,Price,ImgUrl,ImgName,FactoryId,CategoryId")] Product product*/IFormCollection fomr)
+        public async Task<IActionResult> Create(/*[Bind("Id,Name,Code,Description,Price,ImgUrl,ImgName,FactoryId,CategoryId")] Product product*/IFormCollection form)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    _context.Add(product);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            //ViewData["FactoryId"] = new SelectList(_context.Factories, "Id", "Id", product.FactoryId);
-            //return View(product);
+            if (ModelState.IsValid)
+            {
+                Product product = new Product();
+                product.Name = form["Product.Name"];
+                product.Code = form["Product.Code"];
+                product.Description = form["Product.Description"];
+                product.Price = Convert.ToDouble(form["Product.Price"]);
+                product.ImgUrl = form["Product.ImgUrl"];
+                product.ImgName = form["Product.ImgName"];
+                product.FactoryId = Convert.ToInt32(form["Product.FactoryId"]);
+                product.CategoryId = Convert.ToInt32(form["Product.CategoryId"]);
+                _context.Add(product);
+                await _context.SaveChangesAsync();
+
+                int id = product.Id;
+
+                var uniqueSpecsNames = form["ProductUniqueSpecs.Name"];
+                var uniqueSpecsValues = form["ProductUniqueSpecs.Value"];
+                var cnt = uniqueSpecsNames.Count();
+
+                for (int  i = 0; i < cnt; i ++)
+                {
+                    ProductUniqueSpec tmp = new ProductUniqueSpec();
+                    tmp.Name = uniqueSpecsNames[i];
+                    tmp.Value = uniqueSpecsValues[i];
+                    tmp.ProductId = id;
+                    _context.Add(tmp);
+                }
+                await _context.SaveChangesAsync();
+                
+                var categorySpecsIds = form["CategorySpec.Id"];
+                var categorySpecsValues = form["ProductSpec.Value"];
+                cnt = categorySpecsIds.Count();
+
+                for (int i = 0; i < cnt; i++)
+                {
+                    ProductSpec tmp = new ProductSpec();
+                    tmp.CategorySpecId = Convert.ToInt32(categorySpecsIds[i]);
+                    tmp.Value = categorySpecsValues[i];
+                    tmp.ProductId = id;
+                    _context.Add(tmp);
+                }
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
             return View();
         }
 
@@ -169,15 +206,12 @@ namespace Supplier.Controllers
         ///
         public IActionResult GetCategorySpecs(int id)
         {
-            var categorySpecsNames = _context.CategorySpecs.Where(s => s.Category.Id == id).ToList();
-            List<CategorySpecsViewModel> categorySpecs = new List<CategorySpecsViewModel>();
-            foreach(var spec in categorySpecsNames)
-            {
-                CategorySpecsViewModel tmp = new CategorySpecsViewModel();
-                tmp.CategorySpec = spec;
-                categorySpecs.Add(tmp);
-            }
-            return PartialView(categorySpecs);
+            CategorySpecsViewModel ViewModel = new CategorySpecsViewModel();
+
+            var categorySpecs = _context.CategorySpecs.Where(s => s.Category.Id == id).ToList();
+            ViewData["CategorySpecs"] = categorySpecs;
+
+            return PartialView(ViewModel);
         }
 
         public IActionResult AddProductUniqueSpec(int id)

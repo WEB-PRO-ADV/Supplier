@@ -11,11 +11,11 @@ namespace Supplier.Models
         public int Id { get; set; }
         [Required(ErrorMessage = "Value is required.")]
         [DataType(DataType.Text)]
-        [Display(Name = "Name")]
+        [Display(Name = "Value")]
         public String Value { get; set; }
         public int ProductId { get; set; }
-        public Product Product { get; set; }
         public int CategorySpecId { get; set; }
+        public Product Product { get; set; }
         public CategorySpec CategorySpec { get; set; }
     }
 }

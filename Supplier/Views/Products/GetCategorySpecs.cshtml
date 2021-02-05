@@ -1,18 +1,22 @@
-﻿@model List<Supplier.ViewModels.CategorySpecsViewModel>
+﻿@model Supplier.ViewModels.CategorySpecsViewModel
 @{
-    if (Model.Count > 0)
+    var CategorySpecs = (List<CategorySpec>)ViewData["CategorySpecs"];
+}
+@{
+    if (CategorySpecs.Count > 0)
     {
-        for (int i = 0; i < Model.Count; i++)
+        //for (int i = 0; i < CategorySpecs.Count; i++)
+        foreach(var CategorySpec in CategorySpecs)
         {
             <div class="form-group row">
-                <input asp-for="@Model[i].CategorySpec.Id" type="hidden" />
-                @Html.DisplayName(Model[i].CategorySpec.Name)
-                @*, new { @class = "col-lg-4 col-form-label" }*@
-                <div class="col-lg-6">
-                    <input asp-for="@Model[i].ProductSpec.Value" class="form-control" />
-                    <span asp-validation-for="@Model[i].ProductSpec.Value" class="text-danger"></span>
+                <div class="col-lg-4">
+                    <input asp-for="@CategorySpec.Id" type="hidden" />
+                    @Html.Label(CategorySpec.Name)
                 </div>
-
+                <div class="col-lg-6">
+                    <input asp-for="@Model.ProductSpec.Value" class="form-control" />
+                    <span asp-validation-for="@Model.ProductSpec.Value" class="text-danger"></span>
+                </div>
             </div>
         }
     }
