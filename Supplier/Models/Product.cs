@@ -34,9 +34,11 @@ namespace Supplier.Models
         [Display(Name = "Image Name")]
         public string ImgName { get; set; }
         [Display(Name = "Factory")]
+        [Required(ErrorMessage = "Factory is required")]
         public int FactoryId { get; set; }
         public Factory Factory { get; set; }
         [Display(Name = "Category")]
+        [Required(ErrorMessage = "Category is required")]
         public int CategoryId {get; set;}
         public Category Category { get; set; }
         public ICollection<ProductUniqueSpec> ProductUniqueSpecs { set; get; }

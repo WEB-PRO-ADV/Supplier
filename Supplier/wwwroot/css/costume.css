@@ -10,10 +10,10 @@
 }
 
 .new-item {
-    border: 1px solid #e0dfdf;
+    /*border: 1px solid #e0dfdf;
     border-radius: 5px;
-    padding: 10px;
-    position: relative;
+    padding: 10px;*/
+    /*position: relative;*/
     -webkit-animation: fadeInFromNone 1s ease-out;
     -moz-animation: fadeInFromNone 1s ease-out;
     -o-animation: fadeInFromNone 1s ease-out;
@@ -21,12 +21,12 @@
 }
 
 
-.remove-icon {
+/*.remove-icon {
     position: absolute;
     right: -12px;
     bottom: -12px;
     background: #fff;
-}
+}*/
 @-webkit-keyframes fadeInFromNone {
     0% {
         opacity: 0;
@@ -93,4 +93,8 @@
 
 .flex-display {
     display: flex;
+}
+
+.accordion-padding {
+    padding: 10px;
 }

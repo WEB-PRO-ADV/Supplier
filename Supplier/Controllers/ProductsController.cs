@@ -60,7 +60,7 @@ namespace Supplier.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(/*[Bind("Id,Name,Code,Description,Price,ImgUrl,ImgName,FactoryId,CategoryId")] Product product*/IFormCollection form)
+        public async Task<IActionResult> Create(IFormCollection form)
         {
             if (ModelState.IsValid)
             {
@@ -78,8 +78,8 @@ namespace Supplier.Controllers
 
                 int id = product.Id;
 
-                var uniqueSpecsNames = form["ProductUniqueSpecs.Name"];
-                var uniqueSpecsValues = form["ProductUniqueSpecs.Value"];
+                var uniqueSpecsNames = form["ProductUniqueSpec.Name"];
+                var uniqueSpecsValues = form["ProductUniqueSpec.Value"];
                 var cnt = uniqueSpecsNames.Count();
 
                 for (int  i = 0; i < cnt; i ++)
@@ -202,8 +202,6 @@ namespace Supplier.Controllers
             return _context.Products.Any(e => e.Id == id);
         }
 
-        /////////////////// to be replaced
-        ///
         public IActionResult GetCategorySpecs(int id)
         {
             CategorySpecsViewModel ViewModel = new CategorySpecsViewModel();
@@ -216,7 +214,7 @@ namespace Supplier.Controllers
 
         public IActionResult AddProductUniqueSpec(int id)
         {
-            ViewBag.id = id;
+            ViewData["SpecId"] = id;
             return PartialView();
         }
 

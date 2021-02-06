@@ -5,10 +5,9 @@
 @{
     if (CategorySpecs.Count > 0)
     {
-        //for (int i = 0; i < CategorySpecs.Count; i++)
-        foreach(var CategorySpec in CategorySpecs)
+        @foreach (var CategorySpec in CategorySpecs)
         {
-            <div class="form-group row">
+            <div class="row accordion-padding">
                 <div class="col-lg-4">
                     <input asp-for="@CategorySpec.Id" type="hidden" />
                     @Html.Label(CategorySpec.Name)
@@ -25,6 +24,7 @@
         <div class="col-lg-9 centered-container">
             <span class="text-danger">No specifications were found for the chosen category!</span>
         </div>
+
     }
 }
 
