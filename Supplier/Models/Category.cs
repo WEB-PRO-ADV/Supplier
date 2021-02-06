@@ -9,7 +9,5 @@ namespace Supplier.Models
         public string Description { get; set; }
         public ICollection<Product> Products { get; set; }
         public ICollection<CategorySpec> CategorySpecs { get; set; }
-
-
     }
 }

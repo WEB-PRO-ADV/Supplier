@@ -133,9 +133,13 @@ namespace Supplier.Controllers
             }
             var NewProductViewModel = new NewProductViewModel();
             NewProductViewModel.Product = product;
-            //NewProductViewModel.ProductSpec = _context.ProductSpecs.Where(ps => ps.ProductId == product.Id).ToList();
-            //NewProductViewModel.ProductUniqueSpec = _context.ProductUniqueSpecs.Where(pus => pus.ProductId == product.Id).ToList();
-            //NewProductViewModel.ProductSpec = _context.ProductSpecs.Where(ps => ps.ProductId == product.Id).ToList();
+            NewProductViewModel.ProductSpec = _context.ProductSpecs.Where(ps => ps.ProductId == product.Id).ToList();
+            NewProductViewModel.ProductUniqueSpec = _context.ProductUniqueSpecs.Where(pus => pus.ProductId == product.Id).ToList();
+            NewProductViewModel.Category = _context.Categories.Where(c => c.Id == product.CategoryId).FirstOrDefault();
+
+            var categorySpecs = _context.CategorySpecs.Where(cs => cs.CategoryId == NewProductViewModel.Category.Id).ToList();
+            ViewData["CategorySpecs"] = categorySpecs;
+
 
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             ViewData["FactoryId"] = new SelectList(_context.Factories, "Id", "Name", product.FactoryId);

@@ -13,6 +13,7 @@ namespace Supplier.Models
         [DataType(DataType.Text)]
         [Display(Name = "Name")]
         public string Name { get; set; }
+        public int CategoryId { get; set; }
         public Category Category { get; set; }
         public ICollection<ProductSpec> ProductSpecs { get; set; }
 

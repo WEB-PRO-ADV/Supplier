@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Edit";
 }
+@{
+    var CategorySpecs = (List<CategorySpec>)ViewData["CategorySpecs"];
+}
 
 <div class="row page-titles mx-0">
     <div class="col p-md-0 flex-display">
@@ -111,7 +114,7 @@
     <!-- #/ container -->
     <!-- row -->
 
-    <div class="container-fluid" id="category-spec-container">
+    <div class="container-fluid" id="category-spec-container visible">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Category</h4>
@@ -125,7 +128,22 @@
                         </div>
                         <div id="collapseOne1" class="collapse show" data-parent="#accordion-two">
                             <div class="card-body">
-                                <div id="SpecsFromCategories"></div>
+                                <div id="SpecsFromCategories">
+                                    @*@foreach (var CategorySpec in Model.ProductSpec)
+                                    {
+                                        cnt++;
+                                        <div class="row accordion-padding">
+                                            <div class="col-lg-4">
+                                                <input asp-for="@CategorySpec.Id" type="hidden" />
+                                                @Html.Label(CategorySpec.Name)
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <input asp-for="@Model.ProductSpec[cnt].Value" class="form-control" />
+                                                <span asp-validation-for="@Model.ProductSpec[cnt].Value" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    }*@
+                                </div>
                             </div>
                         </div>
                     </div>
