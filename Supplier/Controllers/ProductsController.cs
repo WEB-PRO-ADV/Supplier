@@ -78,31 +78,38 @@ namespace Supplier.Controllers
 
                 int id = product.Id;
 
-                var uniqueSpecsNames = form["ProductUniqueSpec.Name"];
-                var uniqueSpecsValues = form["ProductUniqueSpec.Value"];
-                var cnt = uniqueSpecsNames.Count();
+                
+                int cnt = Convert.ToInt32(form["UniqueSpecsCtr"]);
 
-                for (int  i = 0; i < cnt; i ++)
+                for (int i = 0; i <= cnt; i++)
                 {
-                    ProductUniqueSpec tmp = new ProductUniqueSpec();
-                    tmp.Name = uniqueSpecsNames[i];
-                    tmp.Value = uniqueSpecsValues[i];
-                    tmp.ProductId = id;
-                    _context.Add(tmp);
+                    var uniqueSpecName = form["ProductUniqueSpec[" + i + "].Name"];
+                    var uniqueSpecValue = form["ProductUniqueSpec[" + i + "].Value"];
+                    if(uniqueSpecName.Count > 0 && uniqueSpecValue.Count > 0)
+                    {
+                        ProductUniqueSpec tmp = new ProductUniqueSpec();
+                        tmp.Name = uniqueSpecName;
+                        tmp.Value = uniqueSpecValue;
+                        tmp.ProductId = id;
+                        _context.Add(tmp);
+                    }
                 }
                 await _context.SaveChangesAsync();
-                
-                var categorySpecsIds = form["CategorySpec.Id"];
-                var categorySpecsValues = form["ProductSpec.Value"];
-                cnt = categorySpecsIds.Count();
 
-                for (int i = 0; i < cnt; i++)
+                cnt = Convert.ToInt32(form["CategorySpecsCtr"]);
+                int ndx = 0;
+                for (int i = 0; i <= cnt; i++)
                 {
-                    ProductSpec tmp = new ProductSpec();
-                    tmp.CategorySpecId = Convert.ToInt32(categorySpecsIds[i]);
-                    tmp.Value = categorySpecsValues[i];
-                    tmp.ProductId = id;
-                    _context.Add(tmp);
+                    var categorySpecValue = form["ProductSpec[" + i + "].Value"];
+                    if (categorySpecValue.Count > 0)
+                    {
+                        var categorySpecId = form["CategorySpec.Id"][ndx++];
+                        ProductSpec tmp = new ProductSpec();
+                        tmp.CategorySpecId = Convert.ToInt32(categorySpecId);
+                        tmp.Value = categorySpecValue;
+                        tmp.ProductId = id;
+                        _context.Add(tmp);
+                    }
                 }
                 await _context.SaveChangesAsync();
 
@@ -124,9 +131,15 @@ namespace Supplier.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            ViewData["FactoryId"] = new SelectList(_context.Factories, "Id", "Id", product.FactoryId);
-            return View(product);
+            var NewProductViewModel = new NewProductViewModel();
+            NewProductViewModel.Product = product;
+            //NewProductViewModel.ProductSpec = _context.ProductSpecs.Where(ps => ps.ProductId == product.Id).ToList();
+            //NewProductViewModel.ProductUniqueSpec = _context.ProductUniqueSpecs.Where(pus => pus.ProductId == product.Id).ToList();
+            //NewProductViewModel.ProductSpec = _context.ProductSpecs.Where(ps => ps.ProductId == product.Id).ToList();
+
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+            ViewData["FactoryId"] = new SelectList(_context.Factories, "Id", "Name", product.FactoryId);
+            return View(NewProductViewModel);
         }
 
         // POST: Products/Edit/5

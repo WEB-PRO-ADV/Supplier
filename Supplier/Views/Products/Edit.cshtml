@@ -1,69 +1,204 @@
-﻿@model Supplier.Models.Product
+﻿@model Supplier.ViewModels.NewProductViewModel
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Product</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Code" class="control-label"></label>
-                <input asp-for="Code" class="form-control" />
-                <span asp-validation-for="Code" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImgUrl" class="control-label"></label>
-                <input asp-for="ImgUrl" class="form-control" />
-                <span asp-validation-for="ImgUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImgName" class="control-label"></label>
-                <input asp-for="ImgName" class="form-control" />
-                <span asp-validation-for="ImgName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FactoryId" class="control-label"></label>
-                <select asp-for="FactoryId" class="form-control" asp-items="ViewBag.FactoryId"></select>
-                <span asp-validation-for="FactoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="row page-titles mx-0">
+    <div class="col p-md-0 flex-display">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Products" asp-action="Index">Products</a></li>
+            <li class="breadcrumb-item active"><a asp-controller="Products" asp-action="Create">Create</a></li>
+        </ol>
     </div>
 </div>
+<!-- row -->
+<form asp-action="Create" id="main-form">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">New product info</h4>
+                        <div class="form-valide">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Product.Code" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <input asp-for="@Model.Product.Code" class="form-control" />
+                                    <span asp-validation-for="@Model.Product.Code" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Product.Name" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <input asp-for="@Model.Product.Name" class="form-control" />
+                                    <span asp-validation-for="@Model.Product.Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Product.Description" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <input asp-for="@Model.Product.Description" class="form-control" />
+                                    <span asp-validation-for="@Model.Product.Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Product.Price" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <input asp-for="@Model.Product.Price" class="form-control" />
+                                    <span asp-validation-for="@Model.Product.Price" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Product.ImgUrl" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <input asp-for="@Model.Product.ImgUrl" class="form-control" />
+                                    <span asp-validation-for="@Model.Product.ImgUrl" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Product.ImgName" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <input asp-for="@Model.Product.ImgName" class="form-control" />
+                                    <span asp-validation-for="@Model.Product.ImgName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Product.FactoryId" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <select asp-for="@Model.Product.FactoryId" class="form-control" asp-items="ViewBag.FactoryId">
+                                        <option value="">-</option>
+                                    </select>
+                                    <span asp-validation-for="@Model.Product.FactoryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Product.CategoryId" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <select asp-for="@Model.Product.CategoryId"
+                                            class="form-control"
+                                            asp-items="ViewBag.CategoryId"
+                                            onchange="getCategorySpecs()">
+                                        <option value="">-</option>
+                                    </select>
+                                    <span asp-validation-for="@Model.Product.CategoryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/ container -->
+    <!-- row -->
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Specifications</h4>
+                <p class="text-muted">
+                    <code></code>
+                </p>
+                <div id="ProductUniqueSpecs"></div>
+                <div class="col-lg-8 ml-auto">
+                    <button type="button" class="btn btn-primary" onclick="addProductUniqueSpec()">Add new</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/ container -->
+    <!-- row -->
+
+    <div class="container-fluid" id="category-spec-container">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Category</h4>
+                <p class="text-muted">
+                    <code></code>
+                </p>
+                <div id="accordion-two" class="accordion">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="true" aria-controls="collapseOne1"><i class="fa" aria-hidden="true"></i>Specifications of the chosen category</h5>
+                        </div>
+                        <div id="collapseOne1" class="collapse show" data-parent="#accordion-two">
+                            <div class="card-body">
+                                <div id="SpecsFromCategories"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- #/ container -->
+    <!-- row -->
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Everything is ready? Create the product</h4>
+                        <div class="col-lg-8 ml-auto">
+                            <input type="submit" value="Create" class="btn btn-primary" id="submitCreate" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/ container -->
+</form>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
+    <script>
+        var uniqueSpecsCtr = 0;
+        function getCategorySpecs() {
+            var id = $("#Product_CategoryId :selected").val();
+            if (id == "") {
+                document.getElementById("category-spec-container").style.display = "none";
+            }
+            else {
+                document.getElementById("category-spec-container").style.display = "block";
+            }
+            $.ajax({
+                url: '@Url.Action("GetCategorySpecs", "Products")',
+                data: { id: id },
+                type: 'POST',
+                success: function (data) {
+                    $("#SpecsFromCategories").html(data);
+                    $('form').removeData('validator');
+                    $('form').removeData('unobtrusiveValidation');
+                    $.validator.unobtrusive.parse('form');
+                }
+            });
+        }
+        function addProductUniqueSpec() {
+            uniqueSpecsCtr++;
+            $.ajax({
+                url: '@Url.Action("AddProductUniqueSpec", "Products")',
+                type: 'POST',
+                data: { id: uniqueSpecsCtr },
+                success: function (data) {
+                    $("#ProductUniqueSpecs").append(data);
+                    $('form').removeData('validator');
+                    $('form').removeData('unobtrusiveValidation');
+                    $.validator.unobtrusive.parse('form');
+                }
+            });
+        }
+        function removeUniqueSpec(id) {
+            document.getElementById("product-unique-spec-" + id).innerHTML = "";
+            document.getElementById("product-unique-spec-" + id).style.display = "none";
+            $('form').removeData('validator');
+            $('form').removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse('form');
+        }
+    </script>
 }

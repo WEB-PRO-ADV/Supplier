@@ -8,7 +8,8 @@ namespace Supplier.ViewModels
 {
     public class CategorySpecsViewModel
     {
+        public int CategorySpecsCtr { get; set; }
         public CategorySpec CategorySpec { get; set; }
-        public ProductSpec ProductSpec { get; set; }
+        public List<ProductSpec> ProductSpec { get; set; }
     }
 }

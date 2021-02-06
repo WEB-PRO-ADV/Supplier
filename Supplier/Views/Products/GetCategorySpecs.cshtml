@@ -3,18 +3,21 @@
     var CategorySpecs = (List<CategorySpec>)ViewData["CategorySpecs"];
 }
 @{
+    int cnt = 0;
+    <input id="CategorySpecs" asp-for="CategorySpecsCtr" type="hidden" value="@CategorySpecs.Count" />
     if (CategorySpecs.Count > 0)
     {
         @foreach (var CategorySpec in CategorySpecs)
         {
+            cnt++;
             <div class="row accordion-padding">
                 <div class="col-lg-4">
                     <input asp-for="@CategorySpec.Id" type="hidden" />
                     @Html.Label(CategorySpec.Name)
                 </div>
                 <div class="col-lg-6">
-                    <input asp-for="@Model.ProductSpec.Value" class="form-control" />
-                    <span asp-validation-for="@Model.ProductSpec.Value" class="text-danger"></span>
+                    <input asp-for="@Model.ProductSpec[cnt].Value" class="form-control" />
+                    <span asp-validation-for="@Model.ProductSpec[cnt].Value" class="text-danger"></span>
                 </div>
             </div>
         }

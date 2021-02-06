@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Create";
-    <link href="~/plugins/sweetalert/css/sweetalert.css" rel="stylesheet">
 }
 
 <div class="row page-titles mx-0">
@@ -102,6 +101,7 @@
                 <p class="text-muted">
                     <code></code>
                 </p>
+                <input id="UniqueSpecsCtr" asp-for="UniqueSpecsCtr" type="hidden" value="0"/>
                 <div id="ProductUniqueSpecs"></div>
                 <div class="col-lg-8 ml-auto">
                     <button type="button" class="btn btn-primary" onclick="addProductUniqueSpec()">Add new</button>
@@ -182,6 +182,7 @@
         }
         function addProductUniqueSpec() {
             uniqueSpecsCtr++;
+            $('#UniqueSpecsCtr').val(uniqueSpecsCtr);
             $.ajax({
                 url: '@Url.Action("AddProductUniqueSpec", "Products")',
                 type: 'POST',
@@ -195,29 +196,11 @@
             });
         }
         function removeUniqueSpec(id) {
+            document.getElementById("product-unique-spec-" + id).innerHTML = "";
             document.getElementById("product-unique-spec-" + id).style.display = "none";
+            $('form').removeData('validator');
+            $('form').removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse('form');
         }
     </script>
-    <script src="~/plugins/sweetalert/js/sweetalert.min.js"></script>
-    @*<script>
-        $('#submitCreate').click(function () {
-            var $form = $('main-form');
-            var flag = true;
-            var id = $("#Product_CategoryId :selected").val();
-            if (id == 0) {
-                document.getElementById("validate-category").innerHTML = "Category is required";
-                flag = false;
-            }
-            id = $("#Product_FactoryId :selected").val();
-            if (id == 0) {
-                document.getElementById("validate-factory").innerHTML = "Factory is required";
-                flag = false;
-            }
-            if (!flag) {
-                $form.validate();
-                return false;
-            }
-            return true;
-        });
-    </script>*@
 }
