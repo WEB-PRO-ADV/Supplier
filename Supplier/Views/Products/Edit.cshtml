@@ -172,52 +172,6 @@
     </div>
     <!-- #/ container -->
 </form>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="~/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
-    <script>
-        var uniqueSpecsCtr = 0;
-        function getCategorySpecs() {
-            var id = $("#Product_CategoryId :selected").val();
-            if (id == "") {
-                document.getElementById("category-spec-container").style.display = "none";
-            }
-            else {
-                document.getElementById("category-spec-container").style.display = "block";
-            }
-            $.ajax({
-                url: '@Url.Action("GetCategorySpecs", "Products")',
-                data: { id: id },
-                type: 'POST',
-                success: function (data) {
-                    $("#SpecsFromCategories").html(data);
-                    $('form').removeData('validator');
-                    $('form').removeData('unobtrusiveValidation');
-                    $.validator.unobtrusive.parse('form');
-                }
-            });
-        }
-        function addProductUniqueSpec() {
-            uniqueSpecsCtr++;
-            $.ajax({
-                url: '@Url.Action("AddProductUniqueSpec", "Products")',
-                type: 'POST',
-                data: { id: uniqueSpecsCtr },
-                success: function (data) {
-                    $("#ProductUniqueSpecs").append(data);
-                    $('form').removeData('validator');
-                    $('form').removeData('unobtrusiveValidation');
-                    $.validator.unobtrusive.parse('form');
-                }
-            });
-        }
-        function removeUniqueSpec(id) {
-            document.getElementById("product-unique-spec-" + id).innerHTML = "";
-            document.getElementById("product-unique-spec-" + id).style.display = "none";
-            $('form').removeData('validator');
-            $('form').removeData('unobtrusiveValidation');
-            $.validator.unobtrusive.parse('form');
-        }
-    </script>
-}
+}}
