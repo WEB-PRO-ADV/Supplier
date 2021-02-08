@@ -4,31 +4,62 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Factory</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="row page-titles mx-0">
+    <div class="col p-md-0 flex-display">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Factories" asp-action="Index">Factories</a></li>
+            <li class="breadcrumb-item active"><a asp-controller="Factories" asp-action="Create">Create</a></li>
+        </ol>
     </div>
 </div>
+<!-- row -->
+<form asp-action="Create" id="main-form">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">New factory info</h4>
+                        <div class="form-valide">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            
+                            <div class="form-group row">
+                                <label asp-for="@Model.Name" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <input asp-for="@Model.Name" class="form-control" />
+                                    <span asp-validation-for="@Model.Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                           
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/ container -->
+    <!-- row -->
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <!-- row -->
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    <!-- #/ container -->
+    <!-- row -->
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Everything is ready? Update the factory</h4>
+                        <div class="col-lg-8 ml-auto">
+                            <input type="submit" value="Create" class="btn btn-primary" id="submitCreate" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/ container -->
+</form>

@@ -129,7 +129,8 @@
                         <div id="collapseOne1" class="collapse show" data-parent="#accordion-two">
                             <div class="card-body">
                                 <div id="SpecsFromCategories">
-                                    @*@foreach (var CategorySpec in Model.ProductSpec)
+                                    @{ int cnt = -1; }
+                                    @foreach (var CategorySpec in CategorySpecs)
                                     {
                                         cnt++;
                                         <div class="row accordion-padding">
@@ -142,7 +143,7 @@
                                                 <span asp-validation-for="@Model.ProductSpec[cnt].Value" class="text-danger"></span>
                                             </div>
                                         </div>
-                                    }*@
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -171,52 +172,6 @@
     </div>
     <!-- #/ container -->
 </form>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="~/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
-    <script>
-        var uniqueSpecsCtr = 0;
-        function getCategorySpecs() {
-            var id = $("#Product_CategoryId :selected").val();
-            if (id == "") {
-                document.getElementById("category-spec-container").style.display = "none";
-            }
-            else {
-                document.getElementById("category-spec-container").style.display = "block";
-            }
-            $.ajax({
-                url: '@Url.Action("GetCategorySpecs", "Products")',
-                data: { id: id },
-                type: 'POST',
-                success: function (data) {
-                    $("#SpecsFromCategories").html(data);
-                    $('form').removeData('validator');
-                    $('form').removeData('unobtrusiveValidation');
-                    $.validator.unobtrusive.parse('form');
-                }
-            });
-        }
-        function addProductUniqueSpec() {
-            uniqueSpecsCtr++;
-            $.ajax({
-                url: '@Url.Action("AddProductUniqueSpec", "Products")',
-                type: 'POST',
-                data: { id: uniqueSpecsCtr },
-                success: function (data) {
-                    $("#ProductUniqueSpecs").append(data);
-                    $('form').removeData('validator');
-                    $('form').removeData('unobtrusiveValidation');
-                    $.validator.unobtrusive.parse('form');
-                }
-            });
-        }
-        function removeUniqueSpec(id) {
-            document.getElementById("product-unique-spec-" + id).innerHTML = "";
-            document.getElementById("product-unique-spec-" + id).style.display = "none";
-            $('form').removeData('validator');
-            $('form').removeData('unobtrusiveValidation');
-            $.validator.unobtrusive.parse('form');
-        }
-    </script>
-}
+}}
