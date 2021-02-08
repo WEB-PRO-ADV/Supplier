@@ -235,5 +235,24 @@ namespace Supplier.Controllers
             return PartialView();
         }
 
+        public IActionResult EditGetCategorySpecs(int categoryId, int productId)
+        {
+            var product = _context.Products.Where(p => p.Id == productId).FirstOrDefault();
+            if(product == null)
+            {
+                return NotFound();
+            }
+
+            var category = _context.Categories.Where(c => c.Id == product.CategoryId).FirstOrDefault();
+
+
+
+            CategorySpecsViewModel ViewModel = new CategorySpecsViewModel();
+
+            var categorySpecs = _context.CategorySpecs.Where(s => s.Category.Id == categoryId).ToList();
+            ViewData["CategorySpecs"] = categorySpecs;
+
+            return PartialView(ViewModel);
+        }
     }
 }

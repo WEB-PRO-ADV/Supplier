@@ -1,0 +1,139 @@
+﻿@model Supplier.ViewModels.NewCategoryviewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="row page-titles mx-0">
+    <div class="col p-md-0 flex-display">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Categories" asp-action="Index">Categories</a></li>
+            <li class="breadcrumb-item active"><a asp-controller="Categories" asp-action="Create">Create</a></li>
+        </ol>
+    </div>
+</div>
+<!-- row -->
+
+<form asp-action="Create" id="main-form">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">New category info</h4>
+                        <div class="form-valide">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Category.Name" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <input asp-for="@Model.Category.Name" class="form-control" />
+                                    <span asp-validation-for="@Model.Category.Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="@Model.Category.Description" class="col-lg-4 col-form-label"></label>
+                                <div class="col-lg-6">
+                                    <input asp-for="@Model.Category.Description" class="form-control" />
+                                    <span asp-validation-for="@Model.Category.Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/ container -->
+    <!-- row -->
+
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">New Category Specefication</h4>
+                <p class="text-muted">
+                    <code></code>
+                </p>
+                <input id="CatSpecsCtr" asp-for="CatSpecsCtr" type="hidden" value="0" />
+                <div id="CategorySpecs"></div>
+                <div class="col-lg-8 ml-auto">
+                    <button type="button" class="btn btn-primary" onclick="addCategoryNewSpec()">Add new</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/ container -->
+    <!-- row -->
+
+    <div class="container-fluid" id="category-spec-container">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Category</h4>
+                <p class="text-muted">
+                    <code></code>
+                </p>
+                <div id="accordion-two" class="accordion">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="true" aria-controls="collapseOne1"><i class="fa" aria-hidden="true"></i>Specifications of the chosen category</h5>
+                        </div>
+                        <div id="collapseOne1" class="collapse show" data-parent="#accordion-two">
+                            <div class="card-body">
+                                <div id="SpecsFromCategories"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- #/ container -->
+    <!-- row -->
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Everything is ready? Create the category</h4>
+                        <div class="col-lg-8 ml-auto">
+                            <input type="submit" value="Create" class="btn btn-primary" id="submitCreate" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/ container -->
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
+    <script>
+        var CatSpecsCtr = 0;
+        
+        function addCategoryNewSpec() {
+            CatSpecsCtr++;
+            $('#CatSpecsCtr').val(CatSpecsCtr);
+            $.ajax({
+                url: '@Url.Action("addCategoryNewSpec", "Categories")',
+                type: 'POST',
+                data: { id: CatSpecsCtr },
+                success: function (data) {
+                    $("#CategorySpecs").append(data);
+                    $('form').removeData('validator');
+                    $('form').removeData('unobtrusiveValidation');
+                    $.validator.unobtrusive.parse('form');
+                }
+            });
+        }
+        function removeCategorySpec(id) {
+            document.getElementById("category-spec-" + id).innerHTML = "";
+            document.getElementById("category-spec-" + id).style.display = "none";
+            $('form').removeData('validator');
+            $('form').removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse('form');
+        }
+    </script>
+}
