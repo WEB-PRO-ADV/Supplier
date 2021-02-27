@@ -122,14 +122,12 @@ namespace Supplier
             {
                 return NotFound();
             }
-<<<<<<< Updated upstream
 
-=======
             if (id == 1)
             {
                 return RedirectToAction("Index");
             }
->>>>>>> Stashed changes
+
             var factory = await _context.Factories
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (factory == null)
