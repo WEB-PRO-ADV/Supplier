@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Supplier.APIModels;
 using Supplier.Models;
 
 namespace Supplier.Api
 {
-    [Route("api/category")]
+    [Route("api/categories")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -26,12 +27,26 @@ namespace Supplier.Api
         {
             try
             {
-                var p = _context.Categories.ToList();
-                //foreach(var tmp in p)
-                //{
-                //    tmp.Category = _context.Categories.Where(c => c.Id == tmp.CategoryId).FirstOrDefault();
-                //}
-                return Ok(p);
+                var categories = _context.Categories.ToList();
+                var apiCategories = new List<CategoryApiModel>();
+
+                foreach(var category in categories)
+                {
+                    var apiCategory = new CategoryApiModel();
+                    apiCategory.Name = category.Name;
+                    apiCategory.Description = category.Description;
+
+                    var specs = _context.CategorySpecs.Where(cs => cs.CategoryId == category.Id).ToList();
+
+                    apiCategory.Specifications = new List<string>();
+                    foreach (var spec in specs)
+                    {
+                        apiCategory.Specifications.Add(spec.Name);
+                    }
+
+                    apiCategories.Add(apiCategory);
+                }
+                return Ok(apiCategories);
             }
             catch
             {
@@ -40,34 +55,33 @@ namespace Supplier.Api
         }
 
         [Produces("application/json")]
-        [HttpGet("ById/{id}")]
-        public async Task<IActionResult> ById(int id)
+        [HttpGet("Name/{name}")]
+        public async Task<IActionResult> Name(string name)
         {
             try
             {
-                var p = _context.Categories.Find(id);
-                return Ok(p);
+                var category = _context.Categories.Where(c => c.Name == name).FirstOrDefault();
+                if(category == null)
+                {
+                    return BadRequest();
+                }
+                var apiCategory = new CategoryApiModel();
+                apiCategory.Name = category.Name;
+                apiCategory.Description = category.Description;
+
+                var specs = _context.CategorySpecs.Where(cs => cs.CategoryId == category.Id).ToList();
+
+                apiCategory.Specifications = new List<string>();
+                foreach (var spec in specs)
+                {
+                    apiCategory.Specifications.Add(spec.Name);
+                }
+                return Ok(apiCategory);
             }
             catch
             {
                 return BadRequest();
             }
         }
-
-        [Produces("application/json")]
-        [HttpGet("ByName/{Name}")]
-        public async Task<IActionResult> ByName(string name)
-        {
-            try
-            {
-                var p = _context.Categories.Where(x => x.Name == name).ToList();
-                return Ok(p);
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }        
-
     }
 }
