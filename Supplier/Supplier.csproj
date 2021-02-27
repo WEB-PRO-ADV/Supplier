@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+    <Folder Include="Api\" />
     <Folder Include="plugins\jqvmap\js\maps\" />
     <Folder Include="plugins\summernote\css\" />
   </ItemGroup>
