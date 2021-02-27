@@ -8,7 +8,7 @@ namespace Supplier.Models
         public int Id { get; set; }
         [Required(ErrorMessage = "Name is required.")]
         [DataType(DataType.Text)]
-        [Display(Name = "Name")]
+        [Display(Name = "Category Name")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Description is required.")]
         [DataType(DataType.Text)]

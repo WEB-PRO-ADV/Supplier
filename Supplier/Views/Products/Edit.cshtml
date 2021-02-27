@@ -1,10 +1,11 @@
-﻿@model Supplier.ViewModels.NewProductViewModel
+﻿@model Supplier.ViewModels.EditProductViewModel
 
 @{
     ViewData["Title"] = "Edit";
 }
 @{
     var CategorySpecs = (List<CategorySpec>)ViewData["CategorySpecs"];
+    List<ProductSpec> ProductSpecs = (List<ProductSpec>)ViewData["ProductSpec"];
 }
 
 <div class="row page-titles mx-0">
@@ -16,13 +17,14 @@
     </div>
 </div>
 <!-- row -->
-<form asp-action="Create" id="main-form">
+<form asp-action="Edit" id="main-form">
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">New product info</h4>
+                        <input type="hidden" asp-for="@Model.Product.Id" />
                         <div class="form-valide">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group row">
@@ -100,10 +102,71 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Specifications</h4>
+                <h4 class="card-title">Old Specifications</h4>
                 <p class="text-muted">
                     <code></code>
                 </p>
+                <div>
+                    @{
+                        for (int i = 0; i < Model.OldProductUniqueSpec.Count; i++)
+                        {
+                            <div class="form-group new-item" id="old-product-unique-spec-@i">
+                                <div id="accordion-two" class="accordion">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0" data-toggle="collapse" data-target="#collapseOne-unique-@i" aria-expanded="true" aria-controls="collapseOne-unique-@i">
+                                                <i class="fa" aria-hidden="true"></i>
+                                                <strong>#@(i + 1)</strong>
+                                                <span onclick="removeOldUniqueSpec(@i)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                                         width="24" height="24"
+                                                         viewBox="0 0 172 172"
+                                                         style=" fill:#000000;">
+                                                        <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#e74c3c"><path d="M71.66667,14.33333l-7.16667,7.16667h-43v14.33333h7.95052l12.77962,109.33366v0.05599c0.939,7.07108 7.07882,12.44368 14.20736,12.44368h59.111c7.12853,0 13.26835,-5.37269 14.20736,-12.44368l0.014,-0.05599l12.77962,-109.33366h7.95052v-14.33333h-43l-7.16667,-7.16667zM43.89583,35.83333h84.20833l-12.55566,107.5h-59.111z"></path></g></g>
+                                                    </svg>
+                                                </span>
+                                            </h5>
+                                        </div>
+                                        <div id="collapseOne-unique-@i" class="collapse show" data-parent="#accordion-two">
+                                            <input asp-for="@Model.OldProductUniqueSpec[i].Id" type="hidden" value="@Model.OldProductUniqueSpec[i].Id" />
+                                            <div class="card-body">
+                                                <div class="form-group row">
+                                                    <label asp-for="@Model.OldProductUniqueSpec[i].Name" class="col-lg-4 col-form-label"></label>
+                                                    <div class="col-lg-6">
+                                                        <input asp-for="@Model.OldProductUniqueSpec[i].Name" class="form-control" />
+                                                        <span asp-validation-for="@Model.OldProductUniqueSpec[i].Name" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label asp-for="@Model.OldProductUniqueSpec[i].Value" class="col-lg-4 col-form-label"></label>
+                                                    <div class="col-lg-6">
+                                                        <input asp-for="@Model.OldProductUniqueSpec[i].Value" class="form-control" />
+                                                        <span asp-validation-for="@Model.OldProductUniqueSpec[i].Value" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/ container -->
+
+    <!-- row -->
+
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">New Specifications</h4>
+                <p class="text-muted">
+                    <code></code>
+                </p>
+                <input id="UniqueSpecsCtr" asp-for="UniqueSpecsCtr" type="hidden" value="0" />
                 <div id="ProductUniqueSpecs"></div>
                 <div class="col-lg-8 ml-auto">
                     <button type="button" class="btn btn-primary" onclick="addProductUniqueSpec()">Add new</button>
@@ -114,7 +177,7 @@
     <!-- #/ container -->
     <!-- row -->
 
-    <div class="container-fluid visible" id="category-spec-container">
+    <div id="category-spec-container-visible" class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Category</h4>
@@ -129,20 +192,34 @@
                         <div id="collapseOne1" class="collapse show" data-parent="#accordion-two">
                             <div class="card-body">
                                 <div id="SpecsFromCategories">
-                                    @{ int cnt = -1; }
-                                    @foreach (var CategorySpec in CategorySpecs)
-                                    {
-                                        cnt++;
-                                        <div class="row accordion-padding">
-                                            <div class="col-lg-4">
-                                                <input asp-for="@CategorySpec.Id" type="hidden" />
-                                                @Html.Label(CategorySpec.Name)
+                                    @{
+                                        int cnt = 0;
+                                        <input id="CategorySpecs" asp-for="@CategorySpecs.Count" type="hidden" value="@CategorySpecs.Count" />
+                                        if (CategorySpecs.Count > 0)
+                                        {
+                                            @foreach (var CategorySpec in CategorySpecs)
+                                            {
+                                                <div class="row accordion-padding">
+                                                    <div class="col-lg-4">
+                                                        <input asp-for="@CategorySpec.Id" type="hidden" />
+                                                        @Html.Label(CategorySpec.Name)
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <input asp-for="@Model.ProductSpec[cnt].Id" type="hidden" value="@Model.ProductSpec[cnt].Id" />
+                                                        <input asp-for="@Model.ProductSpec[cnt].Value" class="form-control" />
+                                                        <span asp-validation-for="@Model.ProductSpec[cnt].Value" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                cnt++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="col-lg-9 centered-container">
+                                                <span class="text-danger">No specifications were found for the chosen category!</span>
                                             </div>
-                                            <div class="col-lg-6">
-                                                <input asp-for="@Model.ProductSpec[cnt].Value" class="form-control" />
-                                                <span asp-validation-for="@Model.ProductSpec[cnt].Value" class="text-danger"></span>
-                                            </div>
-                                        </div>
+
+                                        }
                                     }
                                 </div>
                             </div>
@@ -163,7 +240,7 @@
                     <div class="card-body">
                         <h4 class="card-title">Everything is ready? Create the product</h4>
                         <div class="col-lg-8 ml-auto">
-                            <input type="submit" value="Create" class="btn btn-primary" id="submitCreate" />
+                            <input type="submit" value="Update" class="btn btn-primary" id="submitCreate" />
                         </div>
                     </div>
                 </div>
@@ -172,6 +249,76 @@
     </div>
     <!-- #/ container -->
 </form>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}}
+<<<<<<< Updated upstream
+    <script src="~/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
+=======
+>>>>>>> Stashed changes
+    <script>
+        var uniqueSpecsCtr = 0;
+        function getCategorySpecs() {
+            var id = $("#Product_CategoryId :selected").val();
+            if (id == "") {
+<<<<<<< Updated upstream
+                document.getElementById("category-spec-container").style.display = "none";
+            }
+            else {
+                document.getElementById("category-spec-container").style.display = "block";
+=======
+                document.getElementById("category-spec-container-visible").style.display = "none";
+            }
+            else {
+                document.getElementById("category-spec-container-visible").style.display = "block";
+>>>>>>> Stashed changes
+            }
+            $.ajax({
+                url: '@Url.Action("GetCategorySpecs", "Products")',
+                data: { id: id },
+                type: 'POST',
+                success: function (data) {
+                    $("#SpecsFromCategories").html(data);
+                    $('form').removeData('validator');
+                    $('form').removeData('unobtrusiveValidation');
+                    $.validator.unobtrusive.parse('form');
+                }
+            });
+        }
+        function addProductUniqueSpec() {
+            uniqueSpecsCtr++;
+<<<<<<< Updated upstream
+=======
+            $('#UniqueSpecsCtr').val(uniqueSpecsCtr);
+>>>>>>> Stashed changes
+            $.ajax({
+                url: '@Url.Action("AddProductUniqueSpec", "Products")',
+                type: 'POST',
+                data: { id: uniqueSpecsCtr },
+                success: function (data) {
+                    $("#ProductUniqueSpecs").append(data);
+                    $('form').removeData('validator');
+                    $('form').removeData('unobtrusiveValidation');
+                    $.validator.unobtrusive.parse('form');
+                }
+            });
+        }
+        function removeUniqueSpec(id) {
+            document.getElementById("product-unique-spec-" + id).innerHTML = "";
+            document.getElementById("product-unique-spec-" + id).style.display = "none";
+            $('form').removeData('validator');
+            $('form').removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse('form');
+        }
+<<<<<<< Updated upstream
+=======
+        function removeOldUniqueSpec(id) {
+            document.getElementById("old-product-unique-spec-" + id).innerHTML = "";
+            document.getElementById("old-product-unique-spec-" + id).style.display = "none";
+            $('form').removeData('validator');
+            $('form').removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse('form');
+        }
+>>>>>>> Stashed changes
+    </script>
+}

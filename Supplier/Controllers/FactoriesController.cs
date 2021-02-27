@@ -55,7 +55,6 @@ namespace Supplier
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Factory factory)
         {
-
             if (ModelState.IsValid)
             {
                 _context.Add(factory);
@@ -123,20 +122,21 @@ namespace Supplier
             {
                 return NotFound();
             }
+<<<<<<< Updated upstream
+
+=======
             if (id == 1)
-                return View("Index");
+            {
+                return RedirectToAction("Index");
+            }
+>>>>>>> Stashed changes
             var factory = await _context.Factories
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (factory == null)
             {
                 return NotFound();
             }
-            var products = _context.Products.Where(p => p.FactoryId == id).ToList();
-            foreach(var product in products)
-            {
-                product.FactoryId = 1;
-            }
-            await _context.SaveChangesAsync();
+
             return View(factory);
         }
 

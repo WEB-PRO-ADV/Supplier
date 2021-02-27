@@ -38,12 +38,19 @@ namespace Supplier.Controllers
 
             var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            var categorySpecs = _context.CategorySpecs.Where(cs => cs.CategoryId == category.Id).ToList();
+
+            var Model = new CategoryDetailsViewModel();
+            Model.Category = category;
+            Model.CategorySpecs = categorySpecs;
+
             if (category == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(Model);
         }
 
         // GET: Categories/Create
@@ -73,7 +80,7 @@ namespace Supplier.Controllers
                 for (int i = 0; i <= cnt; i++)
                 {
                     var catSpecName = form["CategorySpecs[" + i + "].Name"];
-                    if (catSpecName.Count > 0 )
+                    if (catSpecName.Count > 0)
                     {
                         CategorySpec tmp = new CategorySpec();
                         tmp.Name = catSpecName;
@@ -161,12 +168,51 @@ namespace Supplier.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, IFormCollection form)
         {
-            var category = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var Category = await _context.Categories.FindAsync(id);
+            if (Category.Id == 1)
+            {
+                return RedirectToAction(nameof(Index));
+
+            }
+            else
+            {
+
+
+                var ProductSpec = _context.ProductSpecs.ToList();
+                var CategorySpec = _context.CategorySpecs.ToList();
+                var Product = _context.Products.ToList();
+                foreach (var item in ProductSpec)
+                {
+                    if (item.CategorySpecId == id)
+                    {
+                        int IdprodSpec = item.Id;
+                        var ProductSpecs = await _context.ProductSpecs.FindAsync(IdprodSpec);
+                        _context.ProductSpecs.Remove(ProductSpecs);
+                    }
+                }
+                foreach (var item in CategorySpec)
+                {
+                    if (item.CategoryId == id)
+                    {
+                        int IdCatSpec = item.Id;
+                        var CategorySpecs = await _context.ProductSpecs.FindAsync(IdCatSpec);
+                        _context.ProductSpecs.Remove(CategorySpecs);
+                    }
+                }
+                foreach (var item in Product)
+                {
+                    if (item.CategoryId == id)
+                    {
+                        item.CategoryId = 1;
+                    }
+                }
+                _context.Categories.Remove(Category);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
         }
 
         private bool CategoryExists(int id)
