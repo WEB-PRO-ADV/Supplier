@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,10 +16,12 @@ namespace Supplier.Controllers
     public class ProductsController : Controller
     {
         private readonly SupplierDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductsController(SupplierDbContext context)
+        public ProductsController(SupplierDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Products
@@ -79,7 +83,7 @@ namespace Supplier.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(IFormCollection form)
+        public async Task<IActionResult> Create(IFormFile image, IFormCollection form)
         {
             if (ModelState.IsValid)
             {
@@ -92,6 +96,21 @@ namespace Supplier.Controllers
                 product.ImgName = form["Product.ImgName"];
                 product.FactoryId = Convert.ToInt32(form["Product.FactoryId"]);
                 product.CategoryId = Convert.ToInt32(form["Product.CategoryId"]);
+                product.ImgName = form["Product.Name"];
+                string uniqueFileName = null;
+                if(image != null)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + image.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        image.CopyTo(fileStream);
+                    }
+                    product.ImgUrl = uniqueFileName;
+                }
+                
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
 
@@ -177,15 +196,17 @@ namespace Supplier.Controllers
         {
             int productId = Convert.ToInt32(form["Product.Id"]);
 
-            var oldProduct = _context.Products.Where(p => p.Id == productId).FirstOrDefault();
-            if (oldProduct == null)
+            var product = _context.Products.Where(p => p.Id == productId).FirstOrDefault();
+            if (product == null)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                Product product = new Product();
+                //Product product = new Product();
+                int oldCategoryId = product.CategoryId;
+                product.Id = productId;
                 product.Name = form["Product.Name"];
                 product.Code = form["Product.Code"];
                 product.Description = form["Product.Description"];
@@ -197,7 +218,7 @@ namespace Supplier.Controllers
                 product.CategoryId = Convert.ToInt32(form["Product.CategoryId"]);
 
                 int cnt = 0;
-                if (oldProduct.CategoryId == product.CategoryId)
+                if (product.CategoryId == oldCategoryId)
                 {
                     var tmpCtr = form["CategorySpecs.Count"];
                     if (tmpCtr.Count == 0)
@@ -344,6 +365,30 @@ namespace Supplier.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var product = await _context.Products.FindAsync(id);
+            if (product == null)
+                return NotFound();
+
+            var uniqueSpecs = _context.ProductUniqueSpecs.Where(pus => pus.ProductId == id).ToList();
+            foreach(var spec in uniqueSpecs)
+            {
+                spec.Product = null;
+                spec.ProductId = 0;
+                _context.ProductUniqueSpecs.Remove(spec);
+            }
+
+            var specs = _context.ProductSpecs.Where(ps => ps.ProductId == id).ToList();
+            foreach(var spec in specs)
+            {
+                spec.Product = null;
+                spec.ProductId = 0;
+                spec.CategorySpec = null;
+                spec.CategorySpecId = 0;
+                _context.ProductSpecs.Remove(spec);
+            }
+            product.Factory = null;
+            product.FactoryId = 0;
+            product.Category = null;
+            product.CategoryId = 0;
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

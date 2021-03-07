@@ -156,7 +156,6 @@
         </div>
     </div>
     <!-- #/ container -->
-
     <!-- row -->
 
     <div class="container-fluid">
@@ -252,26 +251,15 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<<<<<<< Updated upstream
-    <script src="~/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.js"></script>
-=======
->>>>>>> Stashed changes
     <script>
         var uniqueSpecsCtr = 0;
         function getCategorySpecs() {
             var id = $("#Product_CategoryId :selected").val();
             if (id == "") {
-<<<<<<< Updated upstream
-                document.getElementById("category-spec-container").style.display = "none";
-            }
-            else {
-                document.getElementById("category-spec-container").style.display = "block";
-=======
                 document.getElementById("category-spec-container-visible").style.display = "none";
             }
             else {
                 document.getElementById("category-spec-container-visible").style.display = "block";
->>>>>>> Stashed changes
             }
             $.ajax({
                 url: '@Url.Action("GetCategorySpecs", "Products")',
@@ -287,10 +275,7 @@
         }
         function addProductUniqueSpec() {
             uniqueSpecsCtr++;
-<<<<<<< Updated upstream
-=======
             $('#UniqueSpecsCtr').val(uniqueSpecsCtr);
->>>>>>> Stashed changes
             $.ajax({
                 url: '@Url.Action("AddProductUniqueSpec", "Products")',
                 type: 'POST',
@@ -310,8 +295,6 @@
             $('form').removeData('unobtrusiveValidation');
             $.validator.unobtrusive.parse('form');
         }
-<<<<<<< Updated upstream
-=======
         function removeOldUniqueSpec(id) {
             document.getElementById("old-product-unique-spec-" + id).innerHTML = "";
             document.getElementById("old-product-unique-spec-" + id).style.display = "none";
@@ -319,6 +302,5 @@
             $('form').removeData('unobtrusiveValidation');
             $.validator.unobtrusive.parse('form');
         }
->>>>>>> Stashed changes
     </script>
 }

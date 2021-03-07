@@ -20,7 +20,7 @@ namespace Supplier.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Products", null);
         }
 
         public IActionResult Privacy()

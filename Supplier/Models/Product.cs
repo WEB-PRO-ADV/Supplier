@@ -27,7 +27,7 @@ namespace Supplier.Models
         public double Price { get; set; }
         [Required(ErrorMessage = "Image Url is required.")]
         [DataType(DataType.Text)]
-        [Display(Name = "Image Url")]
+        [Display(Name = "Image")]
         public string ImgUrl { get; set; }
         [Required(ErrorMessage = "Image Name is required.")]
         [DataType(DataType.Text)]

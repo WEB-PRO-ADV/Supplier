@@ -103,13 +103,15 @@ namespace Supplier.Controllers
             {
                 return NotFound();
             }
+            EditCategoryViewModel model = new EditCategoryViewModel();
+            model.Category = _context.Categories.Where(c => c.Id == id).FirstOrDefault();
+            model.OldCategorySpecs = _context.CategorySpecs.Where(cs => cs.CategoryId == id).ToList();
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            if (model.Category == null)
             {
                 return NotFound();
             }
-            return View(category);
+            return View(model);
         }
 
         // POST: Categories/Edit/5
@@ -117,9 +119,12 @@ namespace Supplier.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category)
+        public async Task<IActionResult> Edit(IFormCollection form)
         {
-            if (id != category.Id)
+            int id = Convert.ToInt32(form["Category.Id"]);
+
+            var category = _context.Categories.Where(c => c.Id == id).FirstOrDefault();
+            if (category == null)
             {
                 return NotFound();
             }
@@ -128,6 +133,61 @@ namespace Supplier.Controllers
             {
                 try
                 {
+                    category.Id = id;
+                    category.Name = form["Category.Name"];
+                    category.Description = form["Category.Description"];
+
+                    var oldSpecs = _context.CategorySpecs.Where(cs => cs.CategoryId == id).ToList();
+                    var oldSpecsCtr = oldSpecs.Count;
+
+                    for (int i = 0; i < oldSpecsCtr; i++)
+                    {
+                        var tmpSpecId = form["OldCategorySpecs[" + i + "].Id"];
+                        if (tmpSpecId.Count > 0)
+                        {
+                            int specId = Convert.ToInt32(form["OldCategorySpecs[" + i + "].Id"]);
+                            if(specId == oldSpecs[i].Id)
+                            {
+                                oldSpecs[i].Name = form["OldCategorySpecs[" + i + "].Name"];
+                                _context.Update(oldSpecs[i]);
+                            }
+                            else
+                            {
+                                var productSpecs = _context.ProductSpecs.Where(ps => ps.CategorySpecId == oldSpecs[i].Id).ToList();
+                                foreach(var productSpec in productSpecs)
+                                {
+                                    _context.Remove(productSpec);
+                                }
+                                _context.Remove(oldSpecs[i]);
+                            }
+                        }
+                        else
+                        {
+                            var productSpecs = _context.ProductSpecs.Where(ps => ps.CategorySpecId == oldSpecs[i].Id).ToList();
+                            foreach (var productSpec in productSpecs)
+                            {
+                                _context.Remove(productSpec);
+                            }
+                            _context.Remove(oldSpecs[i]);
+                        }
+
+                    }
+
+                    int cnt = Convert.ToInt32(form["CatSpecsCtr"]);
+
+                    for (int i = 0; i <= cnt; i++)
+                    {
+                        var catSpecName = form["CategorySpecs[" + i + "].Name"];
+                        if (catSpecName.Count > 0)
+                        {
+                            CategorySpec tmp = new CategorySpec();
+                            tmp.Name = catSpecName;
+                            tmp.CategoryId = id;
+                            _context.Add(tmp);
+                        }
+                    }
+
+
                     _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
@@ -144,7 +204,7 @@ namespace Supplier.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View();
         }
 
         // GET: Categories/Delete/5
@@ -157,12 +217,19 @@ namespace Supplier.Controllers
 
             var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            var categorySpecs = _context.CategorySpecs.Where(cs => cs.CategoryId == category.Id).ToList();
+
+            var Model = new CategoryDetailsViewModel();
+            Model.Category = category;
+            Model.CategorySpecs = categorySpecs;
+
             if (category == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(Model);
         }
 
         // POST: Categories/Delete/5
@@ -170,45 +237,36 @@ namespace Supplier.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id, IFormCollection form)
         {
-            var Category = await _context.Categories.FindAsync(id);
-            if (Category.Id == 1)
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+                return NotFound();
+            if (category.Id == 1)
             {
                 return RedirectToAction(nameof(Index));
-
             }
             else
             {
+                var catSpecs = _context.CategorySpecs.Where(cs => cs.CategoryId == category.Id).ToList();
 
+                foreach(var catSpec in catSpecs)
+                {
+                    var prodsSpecs = _context.ProductSpecs.Where(ps => ps.CategorySpecId == catSpec.Id).ToList();
+                    foreach (var prodsSpec in prodsSpecs)
+                    {
+                        _context.Remove(prodsSpec);
+                    }
+                    _context.Remove(catSpec);
+                }
 
-                var ProductSpec = _context.ProductSpecs.ToList();
-                var CategorySpec = _context.CategorySpecs.ToList();
-                var Product = _context.Products.ToList();
-                foreach (var item in ProductSpec)
+                var products = _context.Products.Where(p => p.CategoryId == category.Id).ToList();
+
+                foreach(var product in products)
                 {
-                    if (item.CategorySpecId == id)
-                    {
-                        int IdprodSpec = item.Id;
-                        var ProductSpecs = await _context.ProductSpecs.FindAsync(IdprodSpec);
-                        _context.ProductSpecs.Remove(ProductSpecs);
-                    }
+                    product.CategoryId = 1;
+                    _context.Update(product);
                 }
-                foreach (var item in CategorySpec)
-                {
-                    if (item.CategoryId == id)
-                    {
-                        int IdCatSpec = item.Id;
-                        var CategorySpecs = await _context.ProductSpecs.FindAsync(IdCatSpec);
-                        _context.ProductSpecs.Remove(CategorySpecs);
-                    }
-                }
-                foreach (var item in Product)
-                {
-                    if (item.CategoryId == id)
-                    {
-                        item.CategoryId = 1;
-                    }
-                }
-                _context.Categories.Remove(Category);
+
+                _context.Remove(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

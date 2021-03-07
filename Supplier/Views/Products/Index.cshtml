@@ -40,9 +40,6 @@
                                         @Html.DisplayNameFor(model => model.ImgUrl)
                                     </th>
                                     <th>
-                                        @Html.DisplayNameFor(model => model.ImgName)
-                                    </th>
-                                    <th>
                                         @Html.DisplayNameFor(model => model.Factory)
                                     </th>
                                     <th>
@@ -73,10 +70,7 @@
                                         @Html.DisplayFor(modelItem => item.Price)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.ImgUrl)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.ImgName)
+                                        <img src="~/images/@Html.DisplayFor(modelItem => item.ImgUrl)" alt="@Html.DisplayFor(modelItem => item.Name)" width="100" height="100" class="img-fluid thumbnail m-r-15">
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Factory.Name)
